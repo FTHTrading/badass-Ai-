@@ -1,0 +1,160 @@
+openapi: "3.0.0"
+info:
+  title: "Unykorn DOC Intelligence Gateway Routing Fabric"
+  description: "MCP Compliant Apex Orchestrator Router & Multi-Agent Mesh Endpoints"
+  version: "1.0.0"
+servers:
+  - url: "https://gateway.unykorn-doc-intelligence.us-central1.gateway.dev"
+
+paths:
+  # Static Web Content Routes
+  /:
+    get:
+      summary: "Static Hero Frame Container"
+      description: "Serves the animated landing and health status console for Unykorn DOC Intel."
+      operationId: "getHeroFrame"
+      responses:
+        '200':
+          description: "Successful response serving static web page."
+      x-google-backend:
+        address: "https://unykorn-static-hero-frame-us-central1.run.app"
+
+  /terminal:
+    get:
+      summary: "Workspace Console UI"
+      description: "Serves the retro-futuristic dark mode workspace terminal dashboard."
+      operationId: "getWorkspaceTerminal"
+      responses:
+        '200':
+          description: "Successful response serving terminal application."
+      x-google-backend:
+        address: "https://unykorn-workspace-console-us-central1.run.app"
+
+  # Core Orchestrator Session APIs
+  /api/v1/session/start:
+    post:
+      summary: "Cloud Firestore KV initialization"
+      description: "Starts a new legal/compliance workflow session and returns a Session UUID."
+      operationId: "startSession"
+      responses:
+        '201':
+          description: "Session initialized successfully."
+      x-google-backend:
+        address: "https://apex-orchestrator-router-us-central1.run.app/api/v1/session/start"
+
+  /api/v1/session/{id}/message:
+    post:
+      summary: "Apex Orchestrator Router Execution"
+      description: "Receives user instructions, runs Gemini 1.5 Pro reasoning, and drives sub-agents."
+      operationId: "executeRouter"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        '200':
+          description: "Orchestrator successfully processed the instructions."
+      x-google-backend:
+        address: "https://apex-orchestrator-router-us-central1.run.app/api/v1/session/{id}/message"
+
+  /api/v1/upload/dropzone:
+    post:
+      summary: "Cloud Storage Document Stream Ingestion"
+      description: "Ingests raw PDF/JSON/MD documents directly to GCP Cloud Storage for processing."
+      operationId: "uploadDocument"
+      responses:
+        '202':
+          description: "Document received and stream pipeline triggered."
+      x-google-backend:
+        address: "https://apex-orchestrator-router-us-central1.run.app/api/v1/upload/dropzone"
+
+  /api/v1/session/{id}/artifacts:
+    get:
+      summary: "x402 Traceability Map Registry"
+      description: "Fetches generated legal package links, compliance logs, and notary ledger states."
+      operationId: "getSessionArtifacts"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        '200':
+          description: "List of artifacts for the workflow session."
+      x-google-backend:
+        address: "https://apex-orchestrator-router-us-central1.run.app/api/v1/session/{id}/artifacts"
+
+  /api/v1/mcp/health:
+    get:
+      summary: "Subprocess Pool Status Check"
+      description: "Performs real-time latency and health check queries across the 8 agent servers."
+      operationId: "checkMcpHealth"
+      responses:
+        '200':
+          description: "Health status logs returned."
+      x-google-backend:
+        address: "https://apex-orchestrator-router-us-central1.run.app/api/v1/mcp/health"
+
+  # Direct Agent Cloud Run Execution Triggers
+  /api/v1/agent/compliance/eval:
+    post:
+      summary: "doc-compliance-agent Cloud Run trigger"
+      operationId: "triggerComplianceAgent"
+      responses:
+        '200':
+          description: "Exemption checklist compiled."
+      x-google-backend:
+        address: "https://doc-compliance-agent-us-central1.run.app/api/v1/evaluate"
+
+  /api/v1/agent/drafter/build:
+    post:
+      summary: "doc-drafter-agent Cloud Run trigger"
+      operationId: "triggerDrafterAgent"
+      responses:
+        '200':
+          description: "Legal package drafted."
+      x-google-backend:
+        address: "https://doc-drafter-agent-us-central1.run.app/api/v1/draft"
+
+  /api/v1/agent/contract/compile:
+    post:
+      summary: "doc-contract-agent Cloud Run trigger"
+      operationId: "triggerContractAgent"
+      responses:
+        '200':
+          description: "Contract compilation successful."
+      x-google-backend:
+        address: "https://doc-contract-agent-us-central1.run.app/api/v1/compile"
+
+  /api/v1/agent/notary/anchor:
+    post:
+      summary: "doc-notary-agent Cloud Run trigger"
+      operationId: "triggerNotaryAgent"
+      responses:
+        '200':
+          description: "Notary anchor ledger state registered."
+      x-google-backend:
+        address: "https://doc-notary-agent-us-central1.run.app/api/v1/anchor"
+
+  /api/v1/agent/auditor/preflight:
+    get:
+      summary: "doc-auditor-agent Cloud Run trigger"
+      operationId: "triggerAuditorAgent"
+      responses:
+        '200':
+          description: "Preflight audit checks finished."
+      x-google-backend:
+        address: "https://doc-auditor-agent-us-central1.run.app/api/v1/audit"
+
+  /api/v1/broker/provision:
+    post:
+      summary: "doc-brokernet-agent Cloud Run trigger"
+      operationId: "triggerBrokerAgent"
+      responses:
+        '200':
+          description: "Broker portals created successfully."
+      x-google-backend:
+        address: "https://doc-brokernet-agent-us-central1.run.app/api/v1/provision"

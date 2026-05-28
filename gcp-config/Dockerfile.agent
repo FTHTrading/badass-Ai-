@@ -1,0 +1,52 @@
+# ====================================================================
+# UNYKORN DOC INTELLIGENCE MICROSERVICE AGENT NODE DOCKERFILE
+# TARGET PLATFORM: Google Cloud Run (Linux x86_64)
+# ====================================================================
+
+# --- STAGE 1: BUILD ENVIRONMENT ---
+FROM node:20-alpine AS builder
+
+WORKDIR /usr/src/app
+
+# Copy dependency manifests
+COPY package*.json ./
+COPY tsconfig.json ./
+
+# Install dependencies including devDependencies for compilation
+RUN npm ci
+
+# Copy agent source code
+COPY src/ ./src/
+
+# Compile TypeScript to production-ready ES Module Javascript
+RUN npm run build
+
+# Remove development dependencies to prune the node_modules tree
+RUN npm prune --production
+
+# --- STAGE 2: PRODUCTION RUNTIME ---
+FROM node:20-alpine AS runner
+
+# Set production environment variables
+ENV NODE_ENV=production
+ENV PORT=8080
+
+WORKDIR /app
+
+# Copy runtime node modules and built assets from builder stage
+COPY --from=builder /usr/src/app/node_modules ./node_modules
+COPY --from=builder /usr/src/app/dist ./dist
+COPY --from=builder /usr/src/app/package*.json ./
+
+# Create a non-privileged system user for process isolation
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001 -G nodejs && \
+    chown -R nodejs:nodejs /app
+
+USER nodejs
+
+# Expose target HTTP port for Cloud Run routing
+EXPOSE 8080
+
+# Execute the agent bundle index entry point
+CMD ["node", "dist/index.js"]

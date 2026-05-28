@@ -1,0 +1,14 @@
+# CODEOWNERS
+# All changes require review by the FTHTrading account owner
+
+* @FTHTrading
+
+# Core AI engine
+public/app.js @FTHTrading
+public/index.html @FTHTrading
+
+# Cloudflare Worker — AI proxy (contains API routing)
+worker/ @FTHTrading
+
+# Apostle Chain Node
+apostle-node/ @FTHTrading

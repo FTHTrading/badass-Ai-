@@ -1,0 +1,25 @@
+node_modules/
+.wrangler/
+dist/
+*.log
+.env
+.env.local
+.env.production
+*.env
+
+# Wrangler cache
+worker/.wrangler/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Sensitive
+*.pem
+*.key
+seed.txt
+mnemonic.txt

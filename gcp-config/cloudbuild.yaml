@@ -1,0 +1,137 @@
+# ====================================================================
+# UNYKORN DOC INTELLIGENCE AGENT BUILD PIPELINE
+# ORCHESTRATOR: Google Cloud Build
+# ====================================================================
+
+steps:
+  # --------------------------------------------------------------------
+  # STEP 1: COMPILING & CACHING MULTI-AGENT CONTAINERS (PARALLEL BUILDS)
+  # --------------------------------------------------------------------
+  
+  # Node 1: Intake Agent
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-doc-intake-agent'
+    args: [
+      'build',
+      '-t', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-intake-agent:${SHORT_SHA}',
+      '-t', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-intake-agent:latest',
+      '-f', 'gcp-config/Dockerfile.agent',
+      'agents/intake'
+    ]
+    waitFor: ['-']
+
+  # Node 2: KYC/KYB Identity Agent
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-doc-kyc-kyb-agent'
+    args: [
+      'build',
+      '-t', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-kyc-kyb-agent:${SHORT_SHA}',
+      '-t', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-kyc-kyb-agent:latest',
+      '-f', 'gcp-config/Dockerfile.agent',
+      'agents/identity'
+    ]
+    waitFor: ['-']
+
+  # Node 3: Compliance Agent
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-doc-compliance-agent'
+    args: [
+      'build',
+      '-t', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-compliance-agent:${SHORT_SHA}',
+      '-t', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-compliance-agent:latest',
+      '-f', 'gcp-config/Dockerfile.agent',
+      'agents/compliance'
+    ]
+    waitFor: ['-']
+
+  # Node 4: Drafter Agent
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-doc-drafter-agent'
+    args: [
+      'build',
+      '-t', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-drafter-agent:${SHORT_SHA}',
+      '-t', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-drafter-agent:latest',
+      '-f', 'gcp-config/Dockerfile.agent',
+      'agents/drafter'
+    ]
+    waitFor: ['-']
+
+  # Node 5: Contract Agent
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-doc-contract-agent'
+    args: [
+      'build',
+      '-t', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-contract-agent:${SHORT_SHA}',
+      '-t', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-contract-agent:latest',
+      '-f', 'gcp-config/Dockerfile.agent',
+      'agents/contract'
+    ]
+    waitFor: ['-']
+
+  # Node 6: Brokernet Agent
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-doc-brokernet-agent'
+    args: [
+      'build',
+      '-t', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-brokernet-agent:${SHORT_SHA}',
+      '-t', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-brokernet-agent:latest',
+      '-f', 'gcp-config/Dockerfile.agent',
+      'agents/brokernet'
+    ]
+    waitFor: ['-']
+
+  # Node 7: Notary Agent
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-doc-notary-agent'
+    args: [
+      'build',
+      '-t', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-notary-agent:${SHORT_SHA}',
+      '-t', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-notary-agent:latest',
+      '-f', 'gcp-config/Dockerfile.agent',
+      'agents/notary'
+    ]
+    waitFor: ['-']
+
+  # Node 8: Auditor Agent
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-doc-auditor-agent'
+    args: [
+      'build',
+      '-t', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-auditor-agent:${SHORT_SHA}',
+      '-t', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-auditor-agent:latest',
+      '-f', 'gcp-config/Dockerfile.agent',
+      'agents/auditor'
+    ]
+    waitFor: ['-']
+
+# --------------------------------------------------------------------
+# STAGE 2: PUSH IMAGES TO GOOGLE ARTIFACT REGISTRY
+# --------------------------------------------------------------------
+images:
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-intake-agent:latest'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-intake-agent:${SHORT_SHA}'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-kyc-kyb-agent:latest'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-kyc-kyb-agent:${SHORT_SHA}'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-compliance-agent:latest'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-compliance-agent:${SHORT_SHA}'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-drafter-agent:latest'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-drafter-agent:${SHORT_SHA}'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-contract-agent:latest'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-contract-agent:${SHORT_SHA}'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-brokernet-agent:latest'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-brokernet-agent:${SHORT_SHA}'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-notary-agent:latest'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-notary-agent:${SHORT_SHA}'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-auditor-agent:latest'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/doc-auditor-agent:${SHORT_SHA}'
+
+# --------------------------------------------------------------------
+# DEFAULT SUBSTITUTIONS (CAN BE OVERRIDDEN AT TRIGGER TIME)
+# --------------------------------------------------------------------
+substitutions:
+  _REGION: 'us-central1'
+  _REPOSITORY: 'unykorn-agent-registry'
+
+options:
+  machineType: 'E2_HIGHCPU_8'
+  logging: CLOUD_LOGGING_ONLY

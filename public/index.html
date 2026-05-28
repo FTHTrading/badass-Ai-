@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Troptions Mint AI | Sovereign Cockpit</title>
+    <!-- Google Fonts: Outfit (high readability headers) & Inter (clean text) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Solana Web3 SDK CDN Injection -->
+    <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+    <script type="module">
+        import * as splToken from 'https://cdn.jsdelivr.net/npm/@solana/spl-token@0.4.14/+esm';
+        window.splToken = splToken;
+    </script>
+</head>
+<body>
+
+    <!-- CRYPTOGRAPHIC INITIALIZATION SPLASH OVERLAY -->
+    <div id="crypt-boot-screen" class="boot-overlay">
+        <div class="boot-card">
+            <div class="boot-logo" style="color: var(--accent-blue); letter-spacing: 2px;">TROPTIONS MINT AI</div>
+            <h1 class="boot-title">SOVEREIGN WEB3 ORCHESTRATOR</h1>
+            <div class="boot-subtitle">ESTABLISHING ENCRYPTED SECURE HANDSHAKE...</div>
+            
+            <div class="boot-scanner-box">
+                <div class="boot-radar">
+                    <div class="radar-line"></div>
+                </div>
+            </div>
+            
+            <div class="boot-security-logs">
+                <div class="sec-log-line">> APIGEE RPC GATEWAY: RESOLVING...</div>
+                <div class="sec-log-line">> HSM VAULT VA01: HANDSHAKE PENDING...</div>
+                <div class="sec-log-line">> ZERO-TRUST PROTOCOL: ACTIVE</div>
+            </div>
+
+            <!-- SEED ENGINE OPTION IN BOOT SCREEN -->
+            <div class="boot-seed-section" style="width: 100%; border: 1px dashed rgba(0, 210, 255, 0.3); padding: 12px; border-radius: 6px; background: rgba(0,0,0,0.3); text-align: left; display: flex; flex-direction: column; gap: 8px;">
+                <div class="boot-seed-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-family: var(--font-hdr); font-size: 10px; font-weight: bold; color: var(--text-secondary); letter-spacing: 0.5px;">🔑 SOVEREIGN CRITICAL SEED SETUP</span>
+                    <button type="button" id="btn-toggle-boot-seed" class="btn-boot-toggle" style="background: rgba(0, 210, 255, 0.1); border: 1px solid var(--accent-blue); color: var(--accent-blue); font-family: var(--font-hdr); font-size: 9px; padding: 2px 8px; border-radius: 4px; cursor: pointer; transition: all 0.2s;">CUSTOMIZE SEED</button>
+                </div>
+                <div id="boot-seed-panel" class="boot-seed-panel" style="display: none; flex-direction: column; gap: 8px;">
+                    <div class="boot-mnemonic-box font-mono" id="boot-mnemonic-display" style="background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); padding: 8px; border-radius: 4px; font-size: 11px; line-height: 1.5; color: var(--accent-blue); word-break: break-word; white-space: pre-wrap;">Loading secure entropy seed...</div>
+                    <div class="boot-seed-actions" style="display: flex; gap: 8px;">
+                        <button type="button" id="btn-boot-regen" class="btn-boot-action" style="flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-primary); font-family: var(--font-hdr); font-size: 9px; padding: 4px; border-radius: 4px; cursor: pointer;">🔄 REGENERATE</button>
+                        <button type="button" id="btn-boot-copy" class="btn-boot-action" style="flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-primary); font-family: var(--font-hdr); font-size: 9px; padding: 4px; border-radius: 4px; cursor: pointer;">📋 COPY</button>
+                    </div>
+                    <div class="boot-input-group" style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-family: var(--font-hdr); font-size: 8px; font-weight: bold; color: var(--text-muted); letter-spacing: 0.5px;">OR INITIALIZE WITH CUSTOM MNEMONIC</label>
+                        <input type="text" id="boot-custom-seed-input" placeholder="Enter 12-word space-separated mnemonic..." autocomplete="off" style="width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); border-radius: 4px; padding: 6px; color: var(--text-primary); font-family: var(--font-body); font-size: 11px; outline: none;">
+                    </div>
+                </div>
+            </div>
+            
+            <button id="btn-boot-system" class="btn-boot">INITIALIZE SYSTEM CORE</button>
+            <div class="boot-footer">AUTHORIZED ACCESS ONLY • GENIUS ACT COGNIZANT</div>
+        </div>
+    </div>
+
+    <!-- MAIN APP LAYOUT CONTAINER -->
+    <div id="doc-intel-app" class="app-layout" style="display: none;">
+        <!-- TOP NAVIGATION BAR -->
+        <header class="top-nav-bar">
+            <div class="brand-meta">
+                <span class="brand-logo" style="color: var(--accent-blue);">TROPTIONS</span>
+                <span class="brand-divider">/</span>
+                <span class="brand-product">Mint-AI</span>
+                <span class="brand-version">v5.3.2-LiveWeb3</span>
+            </div>
+            
+            <div class="header-controls">
+                <button id="btn-connect-wallet" class="theme-toggle-btn" style="background: rgba(0, 210, 255, 0.15); border: 1px solid var(--accent-blue); color: var(--accent-blue); margin-right: 14px;">🔌 Connect Wallet</button>
+                <button id="btn-theme-toggle" class="theme-toggle-btn">💡 High Contrast Mode</button>
+                <div class="system-status">
+                    <div class="status-tag">
+                        <span class="status-dot"></span>
+                        <span>APIGEE SECURE FABRIC ONLINE</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN GRID: TWO-COLUMN COCKPIT -->
+        <main class="main-dashboard-grid">
+            
+            <!-- LEFT COLUMN: THE AI PILOT COMMAND STATION -->
+            <section class="command-panel glass-card">
+                <div class="cockpit-header">
+                    <h2>AI PILOT CENTER</h2>
+                    <span class="system-status-indicator">ACTIVE ROUTER</span>
+                </div>
+
+                <!-- Scenario Selector Registry -->
+                <div class="scenario-selector-wrapper">
+                    <label for="select-scenario" class="scenario-label">SELECT PIPELINE SCENARIO</label>
+                    <select id="select-scenario" class="scenario-select">
+                        <option value="1">Scenario 1: HNW Client Onboarding & Mutual NDA Drafting</option>
+                        <option value="2">Scenario 2: Solana SPL Token Minting & Troptions DEX Listing</option>
+                        <option value="3">Scenario 3: Ethereum EVM Smart Escrow Compiler</option>
+                        <option value="4">Scenario 4: Third-Party NDA Risk Analysis & Audit</option>
+                    </select>
+                </div>
+
+                <!-- AI Command Address Bar -->
+                <div class="ai-command-wrapper">
+                    <span class="ai-icon">⚡</span>
+                    <button id="btn-mic-input" class="mic-btn" title="Dictate Voice Command">🎤</button>
+                    <input type="text" id="ai-command-input" placeholder="Type or dictate commands to the AI..." autocomplete="off">
+                    <button id="btn-execute-ai" class="btn-execute">EXECUTE</button>
+                </div>
+
+                <!-- CANVAS CORE AI ORB VISUALIZER -->
+                <div class="ai-core-container">
+                    <div class="canvas-wrapper">
+                        <canvas id="ai-orb-canvas" width="240" height="240"></canvas>
+                        <div class="ambient-glow"></div>
+                    </div>
+                    
+                    <!-- Speech API Status Indicator -->
+                    <div class="ai-speech-status-bar">
+                        <span class="speech-status-dot" id="speech-status-dot"></span>
+                        <span class="speech-status-txt" id="speech-status-txt">SPEECH SYNTHESIS STANDBY</span>
+                    </div>
+
+                    <!-- Assertive AI Thought Bubble -->
+                    <div class="ai-thought-bubble" id="ai-bubble">
+                        Core engine standby. Select a scenario or enter a command to trigger the mesh.
+                    </div>
+
+                    <!-- Visual Subtitle Feed -->
+                    <div class="ai-subtitle-bar" id="ai-subtitle-bar">
+                        [STANDBY] Sovereign AI Core is online.
+                    </div>
+                </div>
+
+                <!-- ACCESSIBILITY & VOICE CONFIGURATION PANEL -->
+                <div class="voice-config-panel">
+                    <div class="voice-panel-title">VOICE SYNTHESIS SETTINGS</div>
+                    
+                    <div class="voice-row">
+                        <label for="voice-select">ACCENT:</label>
+                        <select id="voice-select" class="voice-select-dropdown">
+                            <!-- Voices populated via JS -->
+                            <option value="">Default System Voice</option>
+                        </select>
+                    </div>
+                    
+                    <div class="sliders-grid">
+                        <div class="slider-item">
+                            <label for="voice-volume">VOLUME:</label>
+                            <input type="range" id="voice-volume" min="0" max="1" step="0.1" value="1">
+                        </div>
+                        <div class="slider-item">
+                            <label for="voice-rate">SPEED:</label>
+                            <input type="range" id="voice-rate" min="0.5" max="2" step="0.1" value="1">
+                        </div>
+                        <div class="slider-item">
+                            <label for="voice-pitch">PITCH:</label>
+                            <input type="range" id="voice-pitch" min="0.5" max="1.5" step="0.1" value="1">
+                        </div>
+                    </div>
+                    
+                    <button id="btn-test-voice" class="btn-test-speech">🔊 Test Voice Settings</button>
+                </div>
+            </section>
+
+            <!-- RIGHT COLUMN: MULTI-CHANNEL OPERATION DESK -->
+            <section class="dashboard-tabs-card glass-card">
+                <!-- Navigation Tabs -->
+                <div class="tab-headers">
+                    <button class="nav-tab active" data-target="tab-pipeline">TIMELINE & CHAT</button>
+                    <button class="nav-tab" data-target="tab-exchange">DEX EXCHANGE</button>
+                    <button class="nav-tab" data-target="tab-wallet-seed">WALLETS & SEED</button>
+                    <button class="nav-tab" data-target="tab-dev-docs">DEVELOPER DESK</button>
+                    <button class="nav-tab" data-target="tab-topology">TOPOLOGY MAP</button>
+                    <button class="nav-tab" data-target="tab-ledger">LEDGER DESK</button>
+                    <button class="nav-tab" data-target="tab-documents">VAULT & STAGING</button>
+                </div>
+
+                <!-- TAB 1: TIMELINE & MULTI-AGENT CHAT -->
+                <div id="tab-pipeline" class="tab-content active">
+                    <div class="timeline-meta-bar">
+                        <span class="meta-label">ACTIVE ORCHESTRATION PIPELINE</span>
+                        <button id="btn-nav-reload" class="btn-reload" title="Reset Dashboard">🔄 RESET</button>
+                    </div>
+                    
+                    <div class="timeline" id="ai-timeline">
+                        <div class="timeline-step" id="step-sca">
+                            <div class="step-marker">1</div>
+                            <div class="step-details">
+                                <h4>Sovereign Comms Agent (SCA)</h4>
+                                <p>Resolving intent and ingesting request metadata...</p>
+                            </div>
+                            <span class="step-status">STANDBY</span>
+                        </div>
+                        
+                        <div class="timeline-step" id="step-vetting">
+                            <div class="step-marker">2</div>
+                            <div class="step-details">
+                                <h4>Vetting Agent</h4>
+                                <p>Auditing KYC lists, ISO records, and red flags rules...</p>
+                            </div>
+                            <span class="step-status">STANDBY</span>
+                        </div>
+
+                        <div class="timeline-step" id="step-sdc">
+                            <div class="step-marker">3</div>
+                            <div class="step-details">
+                                <h4>Secure Document Control (SDC)</h4>
+                                <p>Issuing viewer tokens and forensic watermarks...</p>
+                            </div>
+                            <span class="step-status">STANDBY</span>
+                        </div>
+
+                        <div class="timeline-step" id="step-minting">
+                            <div class="step-marker">4</div>
+                            <div class="step-details">
+                                <h4>Token Minting Agent</h4>
+                                <p>Compiling multi-chain contracts and authorizing HSM keys...</p>
+                            </div>
+                            <span class="step-status">STANDBY</span>
+                        </div>
+
+                        <div class="timeline-step" id="step-liquidity">
+                            <div class="step-marker">5</div>
+                            <div class="step-details">
+                                <h4>DEX Liquidity Broker</h4>
+                                <p>Configuring exchange pools on Troptions DEX...</p>
+                            </div>
+                            <span class="step-status">STANDBY</span>
+                        </div>
+
+                        <div class="timeline-step" id="step-notary">
+                            <div class="step-marker">6</div>
+                            <div class="step-details">
+                                <h4>Notary Anchor Agent</h4>
+                                <p>Anchoring transaction hash and Kubo IPFS CID...</p>
+                            </div>
+                            <span class="step-status">STANDBY</span>
+                        </div>
+                    </div>
+
+                    <!-- Conversational Multi-Agent Chat Log -->
+                    <div class="chat-container">
+                        <div class="chat-title">CONVERSATIONAL AGENT MESH DEBATE</div>
+                        <div class="chat-box" id="agent-chat-box">
+                            <div class="chat-bubble agent-apex">
+                                <span class="bubble-sender">APEX ROUTER</span>
+                                <p>Secure mesh connection established. All sub-agents are synchronized and standby. Select an operation or execute a swap to start the conversational session.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ISO-20022 XML Messaging Compliance Panel -->
+                    <div class="compliance-xml-container" id="xml-container" style="display: none;">
+                        <div class="compliance-xml-hdr">
+                            <span>ISO-20022 PACS.008 COMPLIANCE MESSAGE</span>
+                            <span class="compliance-xml-status" id="xml-status">PENDING GENERATION</span>
+                        </div>
+                        <div class="compliance-xml-body">
+                            <pre><code id="compliance-xml-code" class="font-mono"></code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Live Running Telemetry Logs -->
+                    <div class="logs-container">
+                        <div class="logs-title">ORCHESTRATOR LIVE TELEMETRY</div>
+                        <div class="logs-box" id="telemetry-logs">
+                            <div class="log-line text-muted">[SYSTEM]: Boot sequence completed. Waiting for instructions...</div>
+                        </div>
+                    </div>
+
+                    <!-- HUMAN APPROVAL INTERCEPT GATE -->
+                    <div class="approval-gate-wrapper" id="approval-gate" style="display: none;">
+                        <div class="gate-desc">
+                            <span class="gate-icon">🛡️</span>
+                            <div>
+                                <h5>HUMAN APPROVAL REQUIRED</h5>
+                                <p>Review the generated compliance specifications and secure code and click approve to broadcast transaction.</p>
+                            </div>
+                        </div>
+                        <button id="btn-approve-gate" class="btn-approve">APPROVE & BROADCAST</button>
+                    </div>
+                </div>
+
+                <!-- TAB 2: DEX EXCHANGE (troptionsmint.com/exchange Simulation) -->
+                <div id="tab-exchange" class="tab-content">
+                    <div class="exchange-layout-grid">
+                        
+                        <!-- Left Exchange Column: Swap & Wallet -->
+                        <div class="exchange-col">
+                            <!-- Wallet Access -->
+                            <div class="exchange-card">
+                                <div class="card-header-flex">
+                                    <h4>CONNECTED WALLET ACCESS</h4>
+                                    <span class="wallet-status" id="active-wallet-status">CONNECTED</span>
+                                </div>
+                                <div class="wallet-row-flex">
+                                    <select id="wallet-select" class="wallet-select">
+                                        <option value="phantom">Solana (Phantom Wallet - RWA Node)</option>
+                                        <option value="metamask">Ethereum (MetaMask - ERC-20 Node)</option>
+                                        <option value="albedo">Stellar (Albedo Wallet - Anchor Node)</option>
+                                        <option value="xumm">XRPL (Xumm Wallet - Trustline Node)</option>
+                                        <option value="bitcoin">Bitcoin (UniSat Wallet - SegWit Node)</option>
+                                        <option value="cardano">Cardano (Yoroi Wallet - Plutus Node)</option>
+                                    </select>
+                                    <button id="btn-mint-faucet" class="btn-faucet">MINT TEST FUNDS</button>
+                                </div>
+                                <div class="wallet-balances-box">
+                                    <div class="balance-item"><span class="bal-lbl">USDC Balance:</span> <span class="bal-val" id="bal-usdc">0.00</span></div>
+                                    <div class="balance-item"><span class="bal-lbl">USDT Balance:</span> <span class="bal-val" id="bal-usdt">0.00</span></div>
+                                    <div class="balance-item"><span class="bal-lbl">TROP Balance:</span> <span class="bal-val" id="bal-trop">0.00</span></div>
+                                    <div class="balance-item"><span class="bal-lbl">Native Gas Fee Asset:</span> <span class="bal-val" id="bal-gas">0.00</span></div>
+                                </div>
+                                <div class="wallet-address-display-box" style="margin-top: 8px; font-size: 10px; color: var(--text-secondary); background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border-color); overflow-x: auto; white-space: nowrap; display: flex; justify-content: space-between; align-items: center;">
+                                    <span class="bal-lbl">Active Key:</span> 
+                                    <strong id="wallet-active-key" class="font-mono" style="color: var(--accent-blue);">Boot core to derive...</strong>
+                                </div>
+                                
+                                <!-- Solana RPC & Gas Configuration -->
+                                <div id="solana-rpc-settings-box" style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border-color); display: flex; flex-direction: column; gap: 6px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <span style="font-family: var(--font-hdr); font-size: 9px; font-weight: bold; color: var(--text-muted); letter-spacing: 0.5px; text-transform: uppercase;">⚡ Solana RPC Config</span>
+                                        <span id="rpc-connection-status" style="font-size: 8px; font-weight: bold; color: var(--accent-green);">● MAINNET RPC (DEFAULT)</span>
+                                    </div>
+                                    <div style="display: flex; gap: 6px;">
+                                        <input type="text" id="solana-custom-rpc-input" placeholder="https://api.mainnet-beta.solana.com" style="flex: 1; background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); border-radius: 4px; padding: 4px 8px; color: var(--text-primary); font-family: var(--font-mono); font-size: 9px; outline: none;">
+                                        <button id="btn-apply-custom-rpc" style="background: rgba(0, 210, 255, 0.15); border: 1px solid var(--accent-blue); color: var(--accent-blue); font-family: var(--font-hdr); font-size: 8px; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-weight: bold;">APPLY</button>
+                                    </div>
+                                    <!-- Visual Gas/Fee tracker meter -->
+                                    <div style="display: flex; flex-direction: column; gap: 3px; margin-top: 2px;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 8px; font-family: var(--font-hdr); font-weight: bold; color: var(--text-muted);">
+                                            <span>SOLANA NETWORK FEES TRACKER</span>
+                                            <span style="color: var(--accent-blue);"><span id="solana-gas-price-gwei">5,000</span> lamports/tx</span>
+                                        </div>
+                                        <div style="background: rgba(255,255,255,0.05); height: 4px; border-radius: 2px; overflow: hidden; position: relative;">
+                                            <div id="solana-gas-tracker-bar" style="background: linear-gradient(90deg, var(--accent-green) 0%, var(--accent-amber) 70%, var(--accent-red) 100%); width: 35%; height: 100%; transition: width 0.5s ease-out;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ✈️ SEND / TRANSFER MODULE -->
+                            <div class="exchange-card" id="send-trop-card" style="border: 1px solid rgba(0, 210, 255, 0.35); background: linear-gradient(135deg, rgba(0,210,255,0.04) 0%, rgba(127,0,255,0.04) 100%);">
+                                <div class="card-header-flex" style="margin-bottom: 12px;">
+                                    <h4 style="color: var(--accent-blue);">✈️ SEND TROPTIONS</h4>
+                                    <span class="wallet-status" style="background: rgba(0,210,255,0.15); color: var(--accent-blue); border-color: rgba(0,210,255,0.4);" id="send-status-badge">READY</span>
+                                </div>
+
+                                <!-- FROM Address (auto-populated from active wallet) -->
+                                <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.06); border-radius: 4px; padding: 6px 10px; margin-bottom: 10px; font-size: 9px; font-family: var(--font-hdr);">
+                                    <span style="color: var(--text-muted);">FROM:</span>
+                                    <strong id="send-from-addr" class="font-mono" style="color: var(--accent-green); font-size: 10px; word-break: break-all; text-align: right; max-width: 220px;">Boot system to derive address...</strong>
+                                </div>
+
+                                <!-- Recipient Address -->
+                                <div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px;">
+                                    <label style="font-family: var(--font-hdr); font-size: 9px; font-weight: bold; color: var(--text-muted); letter-spacing: 0.5px;">TO: RECIPIENT WALLET ADDRESS</label>
+                                    <input type="text" id="send-recipient-addr"
+                                        placeholder="Paste Solana / ETH / XRP / ADA address..."
+                                        autocomplete="off"
+                                        style="width: 100%; background: rgba(0,0,0,0.45); border: 1px solid var(--border-color); border-radius: 5px; padding: 8px 10px; color: var(--text-primary); font-family: var(--font-mono); font-size: 10px; outline: none; transition: border-color 0.2s; box-sizing: border-box;">
+                                </div>
+
+                                <!-- Amount + Token Row -->
+                                <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                                    <div style="flex: 2; display: flex; flex-direction: column; gap: 4px;">
+                                        <label style="font-family: var(--font-hdr); font-size: 9px; font-weight: bold; color: var(--text-muted); letter-spacing: 0.5px;">AMOUNT</label>
+                                        <input type="number" id="send-amount" value="1000" min="1" step="100"
+                                            style="width: 100%; background: rgba(0,0,0,0.45); border: 1px solid var(--border-color); border-radius: 5px; padding: 8px 10px; color: var(--text-primary); font-family: var(--font-mono); font-size: 13px; font-weight: bold; outline: none; box-sizing: border-box;">
+                                    </div>
+                                    <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                                        <label style="font-family: var(--font-hdr); font-size: 9px; font-weight: bold; color: var(--text-muted); letter-spacing: 0.5px;">TOKEN</label>
+                                        <select id="send-token-select" style="width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); border-radius: 5px; padding: 8px 6px; color: var(--accent-blue); font-family: var(--font-hdr); font-size: 10px; font-weight: bold; outline: none; cursor: pointer;">
+                                            <option value="trop">TROP</option>
+                                            <option value="usdc">USDC</option>
+                                            <option value="usdt">USDT</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Fee + Mode Row -->
+                                <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.05); border-radius: 4px; padding: 6px 10px; margin-bottom: 10px; font-size: 10px; font-family: var(--font-hdr);">
+                                    <span style="color: var(--text-muted);">Est. Network Fee:</span>
+                                    <span id="send-fee-estimate" style="color: var(--accent-amber); font-weight: bold;">~0.000005 SOL</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.18); border: 1px solid rgba(255,255,255,0.04); border-radius: 4px; padding: 5px 10px; margin-bottom: 12px; font-size: 9px; font-family: var(--font-hdr);">
+                                    <span style="color: var(--text-muted);">Send Mode:</span>
+                                    <span id="send-mode-indicator" style="color: var(--accent-blue); font-weight: bold;">DETECTING...</span>
+                                </div>
+
+                                <!-- Send Button -->
+                                <button id="btn-send-troptions" style="
+                                    width: 100%;
+                                    background: linear-gradient(135deg, rgba(0,210,255,0.3), rgba(127,0,255,0.25));
+                                    border: 1.5px solid var(--accent-blue);
+                                    color: #fff;
+                                    font-family: var(--font-hdr);
+                                    font-size: 12px;
+                                    font-weight: bold;
+                                    letter-spacing: 1.5px;
+                                    padding: 12px;
+                                    border-radius: 6px;
+                                    cursor: pointer;
+                                    transition: all 0.2s;
+                                    text-shadow: 0 0 10px rgba(0,210,255,0.5);
+                                ">✈️ SEND TROPTIONS NOW</button>
+
+                                <!-- Send Result Panel -->
+                                <div id="send-result-log" style="margin-top: 10px; display: none; background: rgba(0,0,0,0.45); border: 1px solid rgba(0,210,255,0.25); border-radius: 6px; padding: 10px; font-size: 10px; font-family: var(--font-mono); color: var(--text-secondary); max-height: 120px; overflow-y: auto; line-height: 1.6;"></div>
+                            </div>
+
+                            <!-- Swap Module -->
+                            <div class="exchange-card swap-box-card">
+                                <h4>TROPTIONS SWAP INTERFACE</h4>
+                                <div class="swap-input-group">
+                                    <label>You Pay</label>
+                                    <div class="swap-input-row">
+                                        <input type="number" id="swap-input-pay" value="1000" min="1" step="10">
+                                        <select id="swap-token-pay" class="token-select">
+                                            <option value="usdc">USDC</option>
+                                            <option value="usdt">USDT</option>
+                                            <option value="sol">SOL (Mainnet)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="swap-divider-btn">⇅</div>
+                                <div class="swap-input-group">
+                                    <label>You Receive (Estimated)</label>
+                                    <div class="swap-input-row">
+                                        <input type="number" id="swap-input-receive" value="20000" readonly>
+                                        <span class="token-receive-tag">TROP</span>
+                                    </div>
+                                </div>
+                                <div class="swap-routes">
+                                    <span>Route: <strong id="swap-route-path">Vault Key -> Troptions Pool -> Solana</strong></span>
+                                    <span>Slip Tolerance: <strong>0.1%</strong> | Network Fee: <strong>$0.015</strong></span>
+                                </div>
+                                <button id="btn-execute-swap" class="btn-swap-execute">EXECUTE SWAP ORDER</button>
+                            </div>
+                        </div>
+
+                        <!-- Right Exchange Column: Charts & Pools -->
+                        <div class="exchange-col">
+                            <!-- Price Chart Card -->
+                            <div class="exchange-card chart-card">
+                                <div class="chart-header">
+                                    <h4>TROP/USDC REAL-TIME MARKET VALUE</h4>
+                                    <div class="chart-metrics">
+                                        <span class="price-up">TROP Price: $<strong id="trop-live-price">0.050</strong> (+4.2%)</span>
+                                    </div>
+                                </div>
+                                <div class="canvas-chart-wrapper">
+                                    <canvas id="dex-price-canvas" width="320" height="150"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- Liquidity Pools -->
+                            <div class="exchange-card">
+                                <h4>ACTIVE LIQUIDITY POOLS</h4>
+                                <div class="pools-list">
+                                    <div class="pool-row">
+                                        <span class="pool-pair">TROP / USDC</span>
+                                        <span class="pool-tvl">TVL: $250,000</span>
+                                        <span class="pool-rate font-mono">1 USDC = 20 TROP</span>
+                                    </div>
+                                    <div class="pool-row">
+                                        <span class="pool-pair">TROP / USDT</span>
+                                        <span class="pool-tvl">TVL: $180,000</span>
+                                        <span class="pool-rate font-mono">1 USDT = 20 TROP</span>
+                                    </div>
+                                    <div class="pool-row">
+                                        <span class="pool-pair">USDF / USDC (Stablecoin)</span>
+                                        <span class="pool-tvl">TVL: $1,000,000</span>
+                                        <span class="pool-rate font-mono">1 USDF = 1.00 USDC</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: DEVELOPER DESK (Contracts & Searchable RAG Knowledgebase) -->
+                <div id="tab-dev-docs" class="tab-content">
+                    <div class="dev-desk-grid">
+                        
+                        <!-- Left Panel: Folder Directory -->
+                        <div class="dev-sidebar">
+                            <div class="dev-toggle-row">
+                                <button class="dev-toggle-btn active" id="btn-toggle-contracts">SMART CONTRACTS</button>
+                                <button class="dev-toggle-btn" id="btn-toggle-rag">RAG KNOWLEDGEBASE</button>
+                                <button class="dev-toggle-btn" id="btn-toggle-remix" style="border-left: 1px solid var(--border-color);">REMIX IDE</button>
+                            </div>
+                            
+                            <!-- Smart Contracts list -->
+                            <div class="dev-file-list" id="contracts-file-list">
+                                <div class="dev-file-row active" data-file="solidity">
+                                    <span>📄 UnykornEscrow.sol</span>
+                                    <span class="file-tag tag-eth">SOLIDITY</span>
+                                </div>
+                                <div class="dev-file-row" data-file="solana">
+                                    <span>📄 unykorn_rwa_mint.rs</span>
+                                    <span class="file-tag tag-sol">RUST</span>
+                                </div>
+                                <div class="dev-file-row" data-file="hsm_vault">
+                                    <span>📄 hsm_vault.rs</span>
+                                    <span class="file-tag tag-sol">RUST</span>
+                                </div>
+                                <div class="dev-file-row" data-file="cardano">
+                                    <span>📄 UnykornNotary.hs</span>
+                                    <span class="file-tag tag-card">HASKELL</span>
+                                </div>
+                                <div class="dev-file-row" data-file="stellar">
+                                    <span>📄 stellar_issue.js</span>
+                                    <span class="file-tag tag-stell">STELLAR</span>
+                                </div>
+                                <div class="dev-file-row" data-file="xrpl">
+                                    <span>📄 xrpl_escrow.js</span>
+                                    <span class="file-tag tag-xrpl">XRPL</span>
+                                </div>
+                                <div class="dev-file-row" data-file="terraform">
+                                    <span>📄 main.tf</span>
+                                    <span class="file-tag tag-gcp">TERRAFORM</span>
+                                </div>
+                                <div class="dev-file-row" data-file="openapi">
+                                    <span>📄 openapi.yaml</span>
+                                    <span class="file-tag tag-apigee">APIGEE</span>
+                                </div>
+                            </div>
+
+                            <!-- RAG Search & List -->
+                            <div class="dev-file-list" id="rag-file-list" style="display: none;">
+                                <div class="dev-search-wrapper">
+                                    <input type="text" id="rag-search-input" placeholder="Search protocol database..." autocomplete="off">
+                                </div>
+                                <div class="rag-db-list" id="rag-db-list-entries">
+                                    <!-- Populated dynamically via app.js -->
+                                </div>
+                            </div>
+
+                            <!-- Remix IDE Compiler Config -->
+                            <div class="dev-file-list" id="remix-file-list" style="display: none;">
+                                <div style="display: flex; flex-direction: column; gap: 10px; padding: 12px;">
+                                    <label style="font-family: var(--font-hdr); font-size: 9px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">SELECT COMPILER VERSION</label>
+                                    <select id="remix-compiler-select" class="seed-select-ui" style="width: 100%;">
+                                        <option value="solc_0.8.20">solc v0.8.20 (Solidity EVM)</option>
+                                        <option value="anchor_0.29.0">anchor-cli v0.29.0 (Solana BPF)</option>
+                                        <option value="plutus_v2">plutus v2.0.0 (Cardano Plutus)</option>
+                                        <option value="stellar_soroban">soroban-cli v20.0.0 (Stellar Soroban)</option>
+                                    </select>
+                                    
+                                    <label style="font-family: var(--font-hdr); font-size: 9px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 8px;">COMPILATION OUTPUTS</label>
+                                    <div id="remix-compile-status" style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 4px; padding: 8px; font-family: var(--font-mono); font-size: 9px; color: var(--text-secondary); min-height: 80px; white-space: pre-wrap; word-break: break-all;">No contract compiled. Click '⚡ Compile Contract' in the editor panel.</div>
+                                    
+                                    <!-- ABI/IDL DECODER INTERFACE PANEL -->
+                                    <div id="remix-idl-decoder-panel" style="display: none; flex-direction: column; gap: 6px; margin-top: 8px;">
+                                        <label style="font-family: var(--font-hdr); font-size: 9px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">✓ COMPILED INTERFACE FUNCTIONS</label>
+                                        <div id="remix-idl-functions-list" style="background: rgba(0, 210, 255, 0.05); border: 1px solid rgba(0, 210, 255, 0.2); border-radius: 4px; padding: 8px; font-family: var(--font-mono); font-size: 9px; color: var(--accent-blue); display: flex; flex-direction: column; gap: 4px;">
+                                            <!-- Injected on compile -->
+                                        </div>
+                                    </div>
+                                    
+                                    <label style="font-family: var(--font-hdr); font-size: 9px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 8px;">DEPLOYMENT SETTINGS</label>
+                                    <div style="display: flex; flex-direction: column; gap: 6px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 4px; padding: 8px;">
+                                        <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--text-secondary);">
+                                            <span>Target Wallet:</span>
+                                            <span id="remix-active-wallet-lbl" style="color: var(--accent-blue); font-weight: bold;">phantom</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--text-secondary); margin-top: 2px;">
+                                            <span>Address:</span>
+                                            <span id="remix-active-address-lbl" class="font-mono" style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-muted);">None</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: Code & Documentation Viewer -->
+                        <div class="dev-code-viewer-panel">
+                            <div class="viewer-header">
+                                <div class="viewer-meta-info">
+                                    <h4 id="dev-doc-title">UnykornEscrow.sol</h4>
+                                    <span class="viewer-tag" id="dev-doc-lang">SOLIDITY</span>
+                                </div>
+                                <div class="viewer-actions">
+                                    <button id="btn-register-vault" class="btn-viewer-action">📥 Register to Vault</button>
+                                    <button id="btn-copy-code" class="btn-viewer-action">📋 Copy Code</button>
+                                    <button id="btn-remix-compile" class="btn-viewer-action" style="display: none; background: rgba(0, 210, 255, 0.15); border-color: var(--accent-blue); color: var(--accent-blue);">⚡ Compile Contract</button>
+                                    <button id="btn-remix-deploy" class="btn-viewer-action" style="display: none; background: rgba(0, 230, 118, 0.15); border-color: var(--accent-green); color: var(--accent-green);">🚀 Deploy to Blockchain</button>
+                                </div>
+                            </div>
+                            <div class="code-editor-area" style="position: relative; height: calc(100% - 50px);">
+                                <pre id="dev-code-display-container" style="margin: 0; height: 100%;"><code id="dev-code-display" class="font-mono"></code></pre>
+                                <textarea id="remix-code-editor" class="font-mono" style="display: none; width: 100%; height: 100%; min-height: 400px; background: #030408; border: none; outline: none; color: var(--text-primary); font-size: 12px; line-height: 1.6; padding: 16px; resize: none; tab-size: 4;" spellcheck="false"></textarea>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- TAB 4: NETWORK TOPOLOGY MAP -->
+                <div id="tab-topology" class="tab-content">
+                    <div class="topology-header">
+                        <h4>MCP AGENT MESH TOPOLOGY</h4>
+                        <p>Real-time visual node routing showing communication flows</p>
+                    </div>
+                    
+                    <div class="svg-container">
+                        <svg id="architecture-flow-svg" viewBox="0 0 300 180" preserveAspectRatio="xMidYMid meet"></svg>
+                    </div>
+                    
+                    <!-- Interactive Agent list -->
+                    <div class="army-list-accessible">
+                        <div class="army-item" id="army-sca">
+                            <div class="army-item-hdr">
+                                <span class="army-avatar">🔴</span>
+                                <div>
+                                    <h5>Sovereign Comms Agent</h5>
+                                    <p class="army-item-status">ONLINE • ROUTING</p>
+                                </div>
+                            </div>
+                            <div class="army-item-details">Resolves intent, parses input, triggers mesh microservices.</div>
+                        </div>
+                        <div class="army-item" id="army-vetting">
+                            <div class="army-item-hdr">
+                                <span class="army-avatar">🛡️</span>
+                                <div>
+                                    <h5>Compliance Vetting Agent</h5>
+                                    <p class="army-item-status">ONLINE • STANDBY</p>
+                                </div>
+                            </div>
+                            <div class="army-item-details">Runs KYC background checks and legal red flag scanning.</div>
+                        </div>
+                        <div class="army-item" id="army-sdc">
+                            <div class="army-item-hdr">
+                                <span class="army-avatar">🟣</span>
+                                <div>
+                                    <h5>Secure Document Control</h5>
+                                    <p class="army-item-status">ONLINE • STANDBY</p>
+                                </div>
+                            </div>
+                            <div class="army-item-details">Injects invisible security forensic watermarks into documents.</div>
+                        </div>
+                        <div class="army-item" id="army-minting">
+                            <div class="army-item-hdr">
+                                <span class="army-avatar">🪙</span>
+                                <div>
+                                    <h5>Token Minting Agent</h5>
+                                    <p class="army-item-status">ONLINE • STANDBY</p>
+                                </div>
+                            </div>
+                            <div class="army-item-details">Compiles Solidity, Rust, and Plutus code; maps HSM keys.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 5: LEDGER DESK -->
+                <div id="tab-ledger" class="tab-content">
+                    <div class="ledger-desk-header">
+                        <h4>MULTI-CHAIN LEDGER STATUS</h4>
+                        <p>Wallets, Smart Contracts, and Stablecoin Issuance</p>
+                    </div>
+                    
+                    <div class="chain-tags-grid">
+                        <span class="chain-tag" id="tag-solidity">SOLIDITY COMPILER</span>
+                        <span class="chain-tag" id="tag-solana">SOLANA RUST VM</span>
+                        <span class="chain-tag" id="tag-haskell">HASKELL PLUTUS</span>
+                        <span class="chain-tag" id="tag-stellar">STELLAR NETWORK</span>
+                        <span class="chain-tag" id="tag-xrpl">XRPL LEDGER</span>
+                        <span class="chain-tag" id="tag-usdt">USDT STABLECOIN</span>
+                        <span class="chain-tag" id="tag-usdc">USDC STABLECOIN</span>
+                    </div>
+
+                    <div class="ledger-details-box">
+                        <div class="ledger-row">
+                            <span class="led-lbl">Active Ledger Authority:</span>
+                            <span class="led-val" id="led-active-net">None (Standby)</span>
+                        </div>
+                        <div class="ledger-row">
+                            <span class="led-lbl">HSM Key Address:</span>
+                            <span class="led-val font-mono" id="led-active-address">None (Locked in HSM Vault)</span>
+                        </div>
+                        <div class="ledger-row">
+                            <span class="led-lbl">Block Anchoring:</span>
+                            <span class="led-val" id="led-active-block">None</span>
+                        </div>
+                        <div class="ledger-row">
+                            <span class="led-lbl">Smart Contract Compiler:</span>
+                            <span class="led-val" id="led-active-compiler">None</span>
+                        </div>
+                        <div class="ledger-row">
+                            <span class="led-lbl">Troptions DEX Liquidity Address:</span>
+                            <span class="led-val font-mono" id="led-dex-address">None</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 6: DOCUMENT VAULT & ARTIFACTS -->
+                <div id="tab-documents" class="tab-content">
+                    <div class="vault-panel-grid">
+                        <!-- Dropzone & File List -->
+                        <div class="vault-sec">
+                            <div class="vault-sec-title">IPFS STAGING DOCUMENTS</div>
+                            
+                            <div class="dropzone" id="upload-dropzone">
+                                <div class="drop-hdr">📥 Drag & drop documents to stage</div>
+                                <input type="file" id="dropzone-file-input" style="display: none;" multiple>
+                            </div>
+
+                            <div class="documents-list">
+                                <div class="doc-row" id="doc-passport" data-doc="passport">
+                                    <span class="row-icon">🪪</span>
+                                    <div class="row-meta">
+                                        <h5>passport_verification.json</h5>
+                                        <p>KYC Identity Scan • 1.2 KB</p>
+                                    </div>
+                                </div>
+                                <div class="doc-row" id="doc-charter" data-doc="charter">
+                                    <span class="row-icon">📕</span>
+                                    <div class="row-meta">
+                                        <h5>capital_markets_charter.pdf</h5>
+                                        <p>Corporate Registration • 3.4 MB</p>
+                                    </div>
+                                </div>
+                                <div class="doc-row" id="doc-exemptions" data-doc="exemptions">
+                                    <span class="row-icon">📝</span>
+                                    <div class="row-meta">
+                                        <h5>regulatory_exempt.md</h5>
+                                        <p>Compliance Statutes • 12 KB</p>
+                                    </div>
+                                </div>
+                                <div class="doc-row" id="doc-thirdparty" data-doc="thirdparty">
+                                    <span class="row-icon">⚠️</span>
+                                    <div class="row-meta">
+                                        <h5>thirdparty_draft_nda.txt</h5>
+                                        <p>Incoming Draft (Red Flags) • 8 KB</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Generated Artifacts -->
+                        <div class="vault-sec">
+                            <div class="vault-sec-title">GENERATED COCKPIT ARTIFACTS</div>
+                            <div class="artifacts-grid" id="artifacts-grid">
+                                <div class="empty-state">No outputs generated. Trigger a scenario to generate contracts.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 7: WALLETS & SEED ENGINE -->
+                <div id="tab-wallet-seed" class="tab-content">
+                    <div class="wallet-engine-grid">
+                        
+                        <!-- Left Panel: Seed Phrase Generator Dashboard -->
+                        <div class="wallet-engine-card glass-card">
+                            <div class="card-header-flex">
+                                <h4>BIP-39 CRYPTOGRAPHIC SEED GENERATOR</h4>
+                                <span class="wallet-status" style="color: var(--accent-green);">HSM ACTIVE</span>
+                            </div>
+                            
+                            <div class="seed-settings-row">
+                                <div class="seed-setting-item">
+                                    <label for="seed-word-count">PHRASE LENGTH</label>
+                                    <select id="seed-word-count" class="seed-select-ui">
+                                        <option value="12">12 Words (128-bit Entropy)</option>
+                                        <option value="24">24 Words (256-bit Entropy)</option>
+                                    </select>
+                                </div>
+                                <div class="seed-setting-item">
+                                    <label for="seed-passphrase">OPTIONAL PASSPHRASE</label>
+                                    <input type="password" id="seed-passphrase" placeholder="BIP-39 Salt Passphrase..." autocomplete="off">
+                                </div>
+                            </div>
+
+                            <!-- Words Grid -->
+                            <div class="mnemonic-words-container">
+                                <div class="mnemonic-grid" id="mnemonic-word-grid">
+                                    <div class="mnemonic-empty-state">No seed phrase loaded. Click Generate below.</div>
+                                </div>
+                            </div>
+
+                            <div class="seed-actions-row">
+                                <button id="btn-generate-seed" class="btn-wallet-action primary-glow">⚡ GENERATE SEED</button>
+                                <button id="btn-copy-seed" class="btn-wallet-action">📋 COPY PHRASE</button>
+                                <button id="btn-toggle-seed-reveal" class="btn-wallet-action">👁️ HIDE WORDS</button>
+                            </div>
+
+                            <!-- Import custom section -->
+                            <div class="seed-import-section">
+                                <div class="section-title-sm">IMPORT SOVEREIGN MNEMONIC</div>
+                                <div class="import-input-row">
+                                    <textarea id="import-mnemonic-area" placeholder="Enter your 12 or 24-word seed phrase here, words separated by single spaces..." autocomplete="off"></textarea>
+                                    <button id="btn-import-seed" class="btn-import-action">📥 IMPORT & DERIVE</button>
+                                </div>
+                                <div id="import-validation-msg" class="validation-msg"></div>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: Sovereign Derived Wallets Matrix -->
+                        <div class="wallet-engine-card glass-card">
+                            <div class="card-header-flex">
+                                <h4>SOVEREIGN DERIVED WALLETS MATRIX</h4>
+                                <button id="btn-sync-wallets-core" class="btn-sync-core">🔄 SYNC TO SYSTEM CORE</button>
+                            </div>
+
+                            <p class="matrix-info-txt">These keys are deterministically derived from the mnemonic seed phrase using custom blockchain derivation paths.</p>
+
+                            <div class="wallets-matrix-list" id="wallets-matrix-list">
+                                <!-- Wallet cards populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- ACCESSIBLE SYSTEM FOOTER -->
+        <footer class="app-footer">
+            <div class="footer-metrics">
+                <span class="m-item">DETERMINISM PREFLIGHT: <strong class="text-green">READY (20,000 HASHES)</strong></span>
+                <span class="m-item">IPFS STATE: <strong class="text-green">ONLINE (KUBO-V0.24)</strong></span>
+                <span class="m-item">AUDIT STATUS: <strong id="val-auditor" class="text-green">STANDBY</strong></span>
+            </div>
+            <div class="footer-copy">
+                From The Hart • fthtrading.com
+            </div>
+        </footer>
+
+        <!-- EXECUTIVE DOCUMENT VIEWER MODAL -->
+        <div id="document-preview-modal" class="modal-overlay">
+            <div class="modal-card">
+                <div class="modal-header-panel">
+                    <div class="modal-title-box">
+                        <h2 id="preview-title">Document Title</h2>
+                        <span id="preview-hash">SHA-256 Checksum</span>
+                    </div>
+                    
+                    <div class="header-controls-box">
+                        <button class="control-btn speak-btn" id="btn-speak-doc" title="Read Document Aloud">🔊 Speak</button>
+                        <span class="control-divider">|</span>
+                        <span class="control-label">READABILITY:</span>
+                        <button class="control-btn" id="btn-font-dec" title="Decrease Font Size">A-</button>
+                        <button class="control-btn" id="btn-font-inc" title="Increase Font Size">A+</button>
+                        <button class="modal-close-btn" id="btn-close-modal" title="Close Preview">&times;</button>
+                    </div>
+                </div>
+
+                <div class="modal-body-panel">
+                    <div id="preview-metadata-box" class="preview-meta"></div>
+                    <div id="preview-body" class="document-legal-paper">
+                        <!-- Content injected dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DICTATION SANDBOX FALLBACK MODAL -->
+        <div id="voice-fallback-modal" class="modal-overlay">
+            <div class="modal-card fallback-modal-card">
+                <div class="modal-header-panel">
+                    <div class="modal-title-box">
+                        <h2>Sovereign Voice Dictation</h2>
+                        <span style="font-size: 10px; color: var(--text-muted);">Local Sandbox Fallback Terminal</span>
+                    </div>
+                    <button class="modal-close-btn" id="btn-close-voice-modal">&times;</button>
+                </div>
+                
+                <div class="modal-body-panel fallback-body">
+                    <p>
+                        Web Speech micro-permissions are blocked by default on local <code>file://</code> targets.
+                    </p>
+                    <div class="local-server-note">
+                        <strong>To unlock native micro-dictation:</strong> Run a local server in the project directory:
+                        <code>npx http-server ./</code> or <code>python -m http.server 8000</code>, and open <code>http://localhost:8000/public/index.html</code>.
+                    </div>
+                    <p style="font-size: 11px; font-weight: bold; color: var(--text-primary); margin-top: 8px;">
+                        SIMULATED DICTATION CONSOLE:
+                    </p>
+                    <div class="voice-sim-form">
+                        <input type="text" id="voice-sim-input" placeholder="Type a mock voice instruction... (e.g. Onboard investor John Doe)" autocomplete="off">
+                        <button id="btn-submit-voice-sim">SUBMIT DICTATION</button>
+                    </div>
+                    <div class="preset-speech-chips">
+                        <button class="speech-chip" data-speech="Onboard client John Doe">"Onboard client John Doe"</button>
+                        <button class="speech-chip" data-speech="Deploy Real Estate SPL tokens to Solana">"Deploy Solana SPL token"</button>
+                        <button class="speech-chip" data-speech="Compile Ethereum Escrow contract">"Compile Ethereum Escrow"</button>
+                        <button class="speech-chip" data-speech="Audit third party NDA for red flags">"Audit third party NDA"</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Injection -->
+    <script src="app.js?v=5.3.2"></script>
+</body>
+</html>
+
+
+
+
+
+
